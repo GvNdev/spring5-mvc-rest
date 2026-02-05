@@ -44,4 +44,11 @@ public class VendorController {
                 vendorService.update(id, vendorDTO), HttpStatus.OK
         );
     }
+
+    @PatchMapping({"{id}"})
+    public ResponseEntity<VendorDTO> patch(@PathVariable Long id, @RequestBody VendorDTO vendorDTO) {
+        return new ResponseEntity<VendorDTO>(
+                vendorService.patch(id, vendorDTO), HttpStatus.OK
+        );
+    }
 }

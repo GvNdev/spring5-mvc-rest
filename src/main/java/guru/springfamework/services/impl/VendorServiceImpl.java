@@ -26,7 +26,7 @@ public class VendorServiceImpl implements VendorService {
                 .stream()
                 .map(vendor -> {
                     VendorDTO vendorDTO = vendorMapper.vendorToVendorDTO(vendor);
-                    vendorDTO.setSelfLink("/api/v1/vendor/" + vendor.getId());
+                    setSelfLink(vendorDTO, vendor.getId());
                     return vendorDTO;
                 })
                 .collect(Collectors.toList());
@@ -58,6 +58,9 @@ public class VendorServiceImpl implements VendorService {
                 vendor.setName(vendorDTO.getName());
             }
 
+            VendorDTO returnVendorDTO = vendorMapper.vendorToVendorDTO(vendorRepository.save(vendor));
+            setSelfLink(returnVendorDTO, id);
+
             return vendorMapper.vendorToVendorDTO(vendorRepository.save(vendor));
         }).orElseThrow(RuntimeException::new); // todo implement better exception handling
     }
@@ -65,7 +68,11 @@ public class VendorServiceImpl implements VendorService {
     private VendorDTO returnDTO(Vendor vendor) {
         Vendor savedVendor = vendorRepository.save(vendor);
         VendorDTO savedVendorDTO = vendorMapper.vendorToVendorDTO(savedVendor);
-        savedVendorDTO.setSelfLink("/api/v1/vendor/" + savedVendor.getId());
+        setSelfLink(savedVendorDTO, savedVendor.getId());
         return savedVendorDTO;
+    }
+
+    private static void setSelfLink(VendorDTO vendorDTO, Long id) {
+        vendorDTO.setSelfLink("/api/v1/vendor/" + id);
     }
 }

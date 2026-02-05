@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
@@ -108,6 +110,25 @@ public class VendorControllerTest {
         mockMvc.perform(put("/api/v1/vendors/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(vendorDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", equalTo("Vendor")))
+                .andExpect(jsonPath("$.self_link", equalTo("/api/v1/vendor/1")));
+    }
+
+    @Test
+    public void patch() throws Exception {
+        VendorDTO vendorDTO = new VendorDTO();
+        vendorDTO.setName("Vendor");
+
+        VendorDTO returnVendorDTO = new VendorDTO();
+        returnVendorDTO.setName(vendorDTO.getName());
+        returnVendorDTO.setSelfLink("/api/v1/vendor/1");
+
+        when(vendorService.patch(anyLong(), any(VendorDTO.class))).thenReturn(returnVendorDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/vendors/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(vendorDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo("Vendor")))
                 .andExpect(jsonPath("$.self_link", equalTo("/api/v1/vendor/1")));
