@@ -41,7 +41,17 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public VendorDTO save(VendorDTO vendorDTO) {
+        return returnDTO(vendorMapper.vendorDTOToVendor(vendorDTO));
+    }
+
+    @Override
+    public VendorDTO update(Long id, VendorDTO vendorDTO) {
         Vendor vendor = vendorMapper.vendorDTOToVendor(vendorDTO);
+        vendor.setId(id);
+        return returnDTO(vendor);
+    }
+
+    private VendorDTO returnDTO(Vendor vendor) {
         Vendor savedVendor = vendorRepository.save(vendor);
         VendorDTO savedVendorDTO = vendorMapper.vendorToVendorDTO(savedVendor);
         savedVendorDTO.setSelfLink("/api/v1/vendor/" + savedVendor.getId());

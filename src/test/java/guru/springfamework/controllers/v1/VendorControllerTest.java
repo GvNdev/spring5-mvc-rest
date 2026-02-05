@@ -17,6 +17,7 @@ import java.util.List;
 import static guru.springfamework.controllers.v1.AbstractRestControllerTest.asJsonString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -55,7 +56,7 @@ public class VendorControllerTest {
         when(vendorService.findAll()).thenReturn(vendorDTOS);
 
         mockMvc.perform(get("/api/v1/vendors")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.vendors", hasSize(2)));
     }
@@ -69,14 +70,14 @@ public class VendorControllerTest {
         when(vendorService.findById(anyLong())).thenReturn(vendorDTO1);
 
         mockMvc.perform(get("/api/v1/vendors/1")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo(VENDOR_NAME)));
     }
 
     @Test
     public void save() throws Exception {
-        VendorDTO vendorDTO =  new VendorDTO();
+        VendorDTO vendorDTO = new VendorDTO();
         vendorDTO.setName("Vendor");
 
         VendorDTO returnVendorDTO = new VendorDTO();
@@ -86,9 +87,28 @@ public class VendorControllerTest {
         when(vendorService.save(vendorDTO)).thenReturn(returnVendorDTO);
 
         mockMvc.perform(post("/api/v1/vendors/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(vendorDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(vendorDTO)))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", equalTo("Vendor")))
+                .andExpect(jsonPath("$.self_link", equalTo("/api/v1/vendor/1")));
+    }
+
+    @Test
+    public void update() throws Exception {
+        VendorDTO vendorDTO = new VendorDTO();
+        vendorDTO.setName("Vendor");
+
+        VendorDTO returnVendorDTO = new VendorDTO();
+        returnVendorDTO.setName(vendorDTO.getName());
+        returnVendorDTO.setSelfLink("/api/v1/vendor/1");
+
+        when(vendorService.update(anyLong(), any(VendorDTO.class))).thenReturn(returnVendorDTO);
+
+        mockMvc.perform(put("/api/v1/vendors/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(vendorDTO)))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo("Vendor")))
                 .andExpect(jsonPath("$.self_link", equalTo("/api/v1/vendor/1")));
     }

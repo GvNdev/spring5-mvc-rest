@@ -82,4 +82,24 @@ public class VendorServiceTest {
         assertEquals(vendorDTO.getName(), savedVendorDTO.getName());
         assertEquals("/api/v1/vendor/1", savedVendorDTO.getSelfLink());
     }
+
+    @Test
+    public void update() {
+        // Given
+        VendorDTO vendorDTO = new VendorDTO();
+        vendorDTO.setName("Vendor");
+
+        Vendor savedVendor = new Vendor();
+        savedVendor.setId(1L);
+        savedVendor.setName(vendorDTO.getName());
+
+        when(vendorRepository.save(any(Vendor.class))).thenReturn(savedVendor);
+
+        // When
+        VendorDTO savedVendorDTO = vendorService.update(1L, vendorDTO);
+
+        // Then
+        assertEquals(vendorDTO.getName(), savedVendorDTO.getName());
+        assertEquals("/api/v1/vendor/1", savedVendorDTO.getSelfLink());
+    }
 }
