@@ -2,6 +2,7 @@ package guru.springfamework.services.impl;
 
 import guru.springfamework.api.v1.mapper.VendorMapper;
 import guru.springfamework.api.v1.model.VendorDTO;
+import guru.springfamework.domain.Vendor;
 import guru.springfamework.repositories.VendorRepository;
 import guru.springfamework.services.VendorService;
 import org.springframework.stereotype.Service;
@@ -36,5 +37,14 @@ public class VendorServiceImpl implements VendorService {
         return vendorRepository.findById(id)
                 .map(vendorMapper::vendorToVendorDTO)
                 .orElseThrow(RuntimeException::new); // todo implement better exception handling
+    }
+
+    @Override
+    public VendorDTO save(VendorDTO vendorDTO) {
+        Vendor vendor = vendorMapper.vendorDTOToVendor(vendorDTO);
+        Vendor savedVendor = vendorRepository.save(vendor);
+        VendorDTO savedVendorDTO = vendorMapper.vendorToVendorDTO(savedVendor);
+        savedVendorDTO.setSelfLink("/api/v1/vendor/" + savedVendor.getId());
+        return savedVendorDTO;
     }
 }

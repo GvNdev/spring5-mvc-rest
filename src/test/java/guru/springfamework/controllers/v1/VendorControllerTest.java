@@ -14,11 +14,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Arrays;
 import java.util.List;
 
+import static guru.springfamework.controllers.v1.AbstractRestControllerTest.asJsonString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -71,5 +72,24 @@ public class VendorControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo(VENDOR_NAME)));
+    }
+
+    @Test
+    public void save() throws Exception {
+        VendorDTO vendorDTO =  new VendorDTO();
+        vendorDTO.setName("Vendor");
+
+        VendorDTO returnVendorDTO = new VendorDTO();
+        returnVendorDTO.setName(vendorDTO.getName());
+        returnVendorDTO.setSelfLink("/api/v1/vendor/1");
+
+        when(vendorService.save(vendorDTO)).thenReturn(returnVendorDTO);
+
+        mockMvc.perform(post("/api/v1/vendors/")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(vendorDTO)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", equalTo("Vendor")))
+                .andExpect(jsonPath("$.self_link", equalTo("/api/v1/vendor/1")));
     }
 }

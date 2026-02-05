@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -60,5 +61,25 @@ public class VendorServiceTest {
         // Then
         assertEquals(VENDOR_ID, vendorDTO.getId());
         assertEquals(VENDOR_NAME, vendorDTO.getName());
+    }
+
+    @Test
+    public void save() {
+        // Given
+        VendorDTO vendorDTO = new VendorDTO();
+        vendorDTO.setName("Vendor");
+
+        Vendor savedVendor = new Vendor();
+        savedVendor.setId(1L);
+        savedVendor.setName(vendorDTO.getName());
+
+        when(vendorRepository.save(any(Vendor.class))).thenReturn(savedVendor);
+
+        // When
+        VendorDTO savedVendorDTO = vendorService.save(vendorDTO);
+
+        // Then
+        assertEquals(vendorDTO.getName(), savedVendorDTO.getName());
+        assertEquals("/api/v1/vendor/1", savedVendorDTO.getSelfLink());
     }
 }
