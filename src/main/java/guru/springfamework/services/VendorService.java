@@ -9,4 +9,5 @@ public interface VendorService {
     VendorDTO findById(Long id);
     VendorDTO save(VendorDTO vendorDTO);
     VendorDTO update(Long id, VendorDTO vendorDTO);
+    VendorDTO patch(Long id, VendorDTO vendorDTO);
 }

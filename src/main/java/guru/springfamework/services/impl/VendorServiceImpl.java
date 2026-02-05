@@ -51,6 +51,17 @@ public class VendorServiceImpl implements VendorService {
         return returnDTO(vendor);
     }
 
+    @Override
+    public VendorDTO patch(Long id, VendorDTO vendorDTO) {
+        return vendorRepository.findById(id).map(vendor -> {
+            if (vendorDTO.getName() != null) {
+                vendor.setName(vendorDTO.getName());
+            }
+
+            return vendorMapper.vendorToVendorDTO(vendorRepository.save(vendor));
+        }).orElseThrow(RuntimeException::new); // todo implement better exception handling
+    }
+
     private VendorDTO returnDTO(Vendor vendor) {
         Vendor savedVendor = vendorRepository.save(vendor);
         VendorDTO savedVendorDTO = vendorMapper.vendorToVendorDTO(savedVendor);
