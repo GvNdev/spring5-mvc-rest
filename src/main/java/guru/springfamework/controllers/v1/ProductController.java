@@ -4,13 +4,9 @@ import guru.springfamework.api.v1.model.ProductDTO;
 import guru.springfamework.api.v1.model.ProductListDTO;
 import guru.springfamework.services.ProductService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping(ProductController.BASE_URL)
 public class ProductController {
     public static final String BASE_URL = "/api/v1/products";
@@ -22,16 +18,14 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<ProductListDTO> findAll() {
-        return new ResponseEntity<ProductListDTO>(
-                new ProductListDTO(productService.findAll()), HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public ProductListDTO findAll() {
+        return new ProductListDTO(productService.findAll());
     }
 
     @GetMapping("{name}")
-    public ResponseEntity<ProductDTO> findByName(@PathVariable String name) {
-        return new ResponseEntity<ProductDTO>(
-                productService.findByName(name), HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public ProductDTO findByName(@PathVariable String name) {
+        return productService.findByName(name);
     }
 }

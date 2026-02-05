@@ -5,10 +5,9 @@ import guru.springfamework.api.v1.model.VendorListDTO;
 import guru.springfamework.services.VendorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping(VendorController.BASE_URL)
 public class VendorController {
     public static final String BASE_URL = "/api/v1/vendors";
@@ -20,43 +19,38 @@ public class VendorController {
     }
 
     @GetMapping
-    public ResponseEntity<VendorListDTO> findAll() {
-        return new ResponseEntity<VendorListDTO>(
-                new VendorListDTO(vendorService.findAll()), HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public VendorListDTO findAll() {
+        return new VendorListDTO(vendorService.findAll());
     }
 
     @GetMapping({"{id}"})
-    public ResponseEntity<VendorDTO> findById(@PathVariable Long id) {
-        return new ResponseEntity<VendorDTO>(
-                vendorService.findById(id), HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public VendorDTO findById(@PathVariable Long id) {
+        return vendorService.findById(id);
     }
 
     @PostMapping
-    public ResponseEntity<VendorDTO> save(@RequestBody VendorDTO vendorDTO) {
-        return new ResponseEntity<VendorDTO>(
-                vendorService.save(vendorDTO), HttpStatus.CREATED
-        );
+    @ResponseStatus(HttpStatus.CREATED)
+    public VendorDTO save(@RequestBody VendorDTO vendorDTO) {
+        return vendorService.save(vendorDTO);
     }
 
     @PutMapping({"{id}"})
-    public ResponseEntity<VendorDTO> update(@PathVariable Long id, @RequestBody VendorDTO vendorDTO) {
-        return new ResponseEntity<VendorDTO>(
-                vendorService.update(id, vendorDTO), HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public VendorDTO update(@PathVariable Long id, @RequestBody VendorDTO vendorDTO) {
+        return vendorService.update(id, vendorDTO);
     }
 
     @PatchMapping({"{id}"})
-    public ResponseEntity<VendorDTO> patch(@PathVariable Long id, @RequestBody VendorDTO vendorDTO) {
-        return new ResponseEntity<VendorDTO>(
-                vendorService.patch(id, vendorDTO), HttpStatus.OK
-        );
+    @ResponseStatus(HttpStatus.OK)
+    public VendorDTO patch(@PathVariable Long id, @RequestBody VendorDTO vendorDTO) {
+        return vendorService.patch(id, vendorDTO);
     }
 
     @DeleteMapping({"{id}"})
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable Long id) {
         vendorService.delete(id);
-        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }
