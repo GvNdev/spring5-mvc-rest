@@ -51,4 +51,10 @@ public class VendorController {
                 vendorService.patch(id, vendorDTO), HttpStatus.OK
         );
     }
+
+    @DeleteMapping({"{id}"})
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        vendorService.delete(id);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
 }

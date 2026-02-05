@@ -65,6 +65,11 @@ public class VendorServiceImpl implements VendorService {
         }).orElseThrow(RuntimeException::new); // todo implement better exception handling
     }
 
+    @Override
+    public void delete(Long id) {
+        vendorRepository.deleteById(id);
+    }
+
     private VendorDTO returnDTO(Vendor vendor) {
         Vendor savedVendor = vendorRepository.save(vendor);
         VendorDTO savedVendorDTO = vendorMapper.vendorToVendorDTO(savedVendor);

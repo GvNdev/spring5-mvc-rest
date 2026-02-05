@@ -17,7 +17,7 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class VendorServiceTest {
     public static final Long VENDOR_ID = 1L;
@@ -101,5 +101,14 @@ public class VendorServiceTest {
         // Then
         assertEquals(vendorDTO.getName(), savedVendorDTO.getName());
         assertEquals("/api/v1/vendor/1", savedVendorDTO.getSelfLink());
+    }
+
+    @Test
+    public void delete() {
+        Long id = 1L;
+
+        vendorRepository.deleteById(id);
+
+        verify(vendorRepository, times(1)).deleteById(anyLong());
     }
 }
