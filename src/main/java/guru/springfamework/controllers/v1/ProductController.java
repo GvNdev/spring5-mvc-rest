@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/api/v1/products")
+@RequestMapping(ProductController.BASE_URL)
 public class ProductController {
+    public static final String BASE_URL = "/api/v1/products";
+
     private final ProductService productService;
 
     public ProductController(ProductService productService) {
