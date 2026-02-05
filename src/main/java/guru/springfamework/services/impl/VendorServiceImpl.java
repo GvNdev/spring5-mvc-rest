@@ -4,6 +4,7 @@ import guru.springfamework.api.v1.mapper.VendorMapper;
 import guru.springfamework.api.v1.model.VendorDTO;
 import guru.springfamework.domain.Vendor;
 import guru.springfamework.repositories.VendorRepository;
+import guru.springfamework.services.ResourceNotFoundException;
 import guru.springfamework.services.VendorService;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class VendorServiceImpl implements VendorService {
     public VendorDTO findById(Long id) {
         return vendorRepository.findById(id)
                 .map(vendorMapper::vendorToVendorDTO)
-                .orElseThrow(RuntimeException::new); // todo implement better exception handling
+                .orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class VendorServiceImpl implements VendorService {
             setSelfLink(returnVendorDTO, id);
 
             return vendorMapper.vendorToVendorDTO(vendorRepository.save(vendor));
-        }).orElseThrow(RuntimeException::new); // todo implement better exception handling
+        }).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override

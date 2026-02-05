@@ -1,6 +1,8 @@
 package guru.springfamework.controllers.v1;
 
 import guru.springfamework.api.v1.model.VendorDTO;
+import guru.springfamework.controllers.RestResponseEntityExceptionHandler;
+import guru.springfamework.services.ResourceNotFoundException;
 import guru.springfamework.services.VendorService;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +12,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
@@ -41,7 +42,9 @@ public class VendorControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(vendorController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(vendorController)
+                .setControllerAdvice(new RestResponseEntityExceptionHandler())
+                .build();
     }
 
     @Test
@@ -65,7 +68,7 @@ public class VendorControllerTest {
     }
 
     @Test
-    public void findByName() throws Exception {
+    public void findById() throws Exception {
         VendorDTO vendorDTO1 = new VendorDTO();
         vendorDTO1.setId(1L);
         vendorDTO1.setName(VENDOR_NAME);
@@ -76,6 +79,15 @@ public class VendorControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo(VENDOR_NAME)));
+    }
+
+    @Test
+    public void findByIdNotFound() throws Exception {
+        when(vendorService.findById(anyLong())).thenThrow(ResourceNotFoundException.class);
+
+        mockMvc.perform(get(VendorController.BASE_URL + "/999")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
