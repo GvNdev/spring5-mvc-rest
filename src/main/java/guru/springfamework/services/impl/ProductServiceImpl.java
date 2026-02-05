@@ -4,11 +4,13 @@ import guru.springfamework.api.v1.mapper.ProductMapper;
 import guru.springfamework.api.v1.model.ProductDTO;
 import guru.springfamework.repositories.ProductRepository;
 import guru.springfamework.services.ProductService;
+import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
