@@ -21,7 +21,7 @@ public class VendorController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public VendorListDTO findAll() {
-        return new VendorListDTO(vendorService.findAll());
+        return vendorService.findAll();
     }
 
     @GetMapping({"{id}"})

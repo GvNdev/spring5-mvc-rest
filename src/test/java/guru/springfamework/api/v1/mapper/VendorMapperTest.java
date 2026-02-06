@@ -7,7 +7,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class VendorMapperTest {
-    public static final long VENDOR_ID = 1L;
     public static final String VENDOR_NAME = "Fresh Fruits from Ecuador Ltd.";
 
     VendorMapper vendorMapper = VendorMapper.INSTANCE;
@@ -16,14 +15,25 @@ public class VendorMapperTest {
     public void vendorToVendorDTO() {
         // Given
         Vendor vendor = new Vendor();
-        vendor.setId(VENDOR_ID);
         vendor.setName(VENDOR_NAME);
 
         // When
         VendorDTO vendorDTO = vendorMapper.vendorToVendorDTO(vendor);
 
         // Then
-        assertEquals(Long.valueOf(VENDOR_ID), vendorDTO.getId());
         assertEquals(VENDOR_NAME, vendorDTO.getName());
+    }
+
+    @Test
+    public void vendorDTOToVendor() {
+        // Given
+        VendorDTO vendorDTO = new VendorDTO();
+        vendorDTO.setName(VENDOR_NAME);
+
+        // When
+        Vendor vendor = vendorMapper.vendorDTOToVendor(vendorDTO);
+
+        // Then
+        assertEquals(VENDOR_NAME, vendor.getName());
     }
 }

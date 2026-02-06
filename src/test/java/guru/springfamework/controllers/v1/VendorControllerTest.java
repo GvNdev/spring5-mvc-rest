@@ -1,15 +1,21 @@
 package guru.springfamework.controllers.v1;
 
 import guru.springfamework.api.v1.model.VendorDTO;
+import guru.springfamework.api.v1.model.VendorListDTO;
 import guru.springfamework.controllers.RestResponseEntityExceptionHandler;
 import guru.springfamework.services.ResourceNotFoundException;
 import guru.springfamework.services.VendorService;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -22,44 +28,37 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@RunWith(SpringRunner.class)
+@WebMvcTest(controllers = {VendorController.class})
 public class VendorControllerTest {
-    public static final String VENDOR_NAME = "VendorTest";
-
-    @Mock
+    @MockBean // provided by Spring Context
     VendorService vendorService;
 
-    @InjectMocks
-    VendorController vendorController;
+    @Autowired
+    MockMvc mockMvc; // provided by Spring Context
 
-    MockMvc mockMvc;
+    VendorDTO vendorDTO_1;
+    VendorDTO vendorDTO_2;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(vendorController)
-                .setControllerAdvice(new RestResponseEntityExceptionHandler())
-                .build();
+        vendorDTO_1 = new VendorDTO("Vendor 1", VendorController.BASE_URL + "/1");
+        vendorDTO_2 = new VendorDTO("Vendor 2", VendorController.BASE_URL + "/2");
     }
 
     @Test
     public void findAll() throws Exception {
-        VendorDTO vendorDTO1 = new VendorDTO();
-        vendorDTO1.setId(1L);
-        vendorDTO1.setName(VENDOR_NAME);
+        VendorListDTO vendorListDTO = new VendorListDTO(Arrays.asList(vendorDTO_1, vendorDTO_2));
 
-        VendorDTO vendorDTO2 = new VendorDTO();
-        vendorDTO2.setId(2L);
-        vendorDTO2.setName("Other");
-
-        List<VendorDTO> vendorDTOS = Arrays.asList(vendorDTO1, vendorDTO2);
-
-        when(vendorService.findAll()).thenReturn(vendorDTOS);
+        given(vendorService.findAll()).willReturn(vendorListDTO);
 
         mockMvc.perform(get(VendorController.BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -69,90 +68,61 @@ public class VendorControllerTest {
 
     @Test
     public void findById() throws Exception {
-        VendorDTO vendorDTO1 = new VendorDTO();
-        vendorDTO1.setId(1L);
-        vendorDTO1.setName(VENDOR_NAME);
-
-        when(vendorService.findById(anyLong())).thenReturn(vendorDTO1);
+        given(vendorService.findById(anyLong())).willReturn(vendorDTO_1);
 
         mockMvc.perform(get(VendorController.BASE_URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo(VENDOR_NAME)));
+                .andExpect(jsonPath("$.name", equalTo(vendorDTO_1.getName())));
     }
 
     @Test
     public void findByIdNotFound() throws Exception {
-        when(vendorService.findById(anyLong())).thenThrow(ResourceNotFoundException.class);
+        given(vendorService.findById(anyLong())).willThrow(ResourceNotFoundException.class);
 
         mockMvc.perform(get(VendorController.BASE_URL + "/999")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void save() throws Exception {
-        VendorDTO vendorDTO = new VendorDTO();
-        vendorDTO.setName("Vendor");
-
-        VendorDTO returnVendorDTO = new VendorDTO();
-        returnVendorDTO.setName(vendorDTO.getName());
-        returnVendorDTO.setSelfLink("/api/v1/vendor/1");
-
-        when(vendorService.save(vendorDTO)).thenReturn(returnVendorDTO);
+        given(vendorService.save(vendorDTO_1)).willReturn(vendorDTO_1);
 
         mockMvc.perform(post(VendorController.BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(vendorDTO)))
+                        .content(asJsonString(vendorDTO_1)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", equalTo("Vendor")))
-                .andExpect(jsonPath("$.self_link", equalTo("/api/v1/vendor/1")));
+                .andExpect(jsonPath("$.name", equalTo(vendorDTO_1.getName())));
     }
 
     @Test
     public void update() throws Exception {
-        VendorDTO vendorDTO = new VendorDTO();
-        vendorDTO.setName("Vendor");
-
-        VendorDTO returnVendorDTO = new VendorDTO();
-        returnVendorDTO.setName(vendorDTO.getName());
-        returnVendorDTO.setSelfLink("/api/v1/vendor/1");
-
-        when(vendorService.update(anyLong(), any(VendorDTO.class))).thenReturn(returnVendorDTO);
+        given(vendorService.update(anyLong(), any(VendorDTO.class))).willReturn(vendorDTO_1);
 
         mockMvc.perform(put(VendorController.BASE_URL + "/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(vendorDTO)))
+                        .content(asJsonString(vendorDTO_1)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo("Vendor")))
-                .andExpect(jsonPath("$.self_link", equalTo("/api/v1/vendor/1")));
+                .andExpect(jsonPath("$.name", equalTo(vendorDTO_1.getName())));
     }
 
     @Test
     public void patch() throws Exception {
-        VendorDTO vendorDTO = new VendorDTO();
-        vendorDTO.setName("Vendor");
-
-        VendorDTO returnVendorDTO = new VendorDTO();
-        returnVendorDTO.setName(vendorDTO.getName());
-        returnVendorDTO.setSelfLink("/api/v1/vendor/1");
-
-        when(vendorService.patch(anyLong(), any(VendorDTO.class))).thenReturn(returnVendorDTO);
+        given(vendorService.patch(anyLong(), any(VendorDTO.class))).willReturn(vendorDTO_1);
 
         mockMvc.perform(MockMvcRequestBuilders.patch(VendorController.BASE_URL + "/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(vendorDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(vendorDTO_1)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", equalTo("Vendor")))
-                .andExpect(jsonPath("$.self_link", equalTo("/api/v1/vendor/1")));
+                .andExpect(jsonPath("$.name", equalTo(vendorDTO_1.getName())));
     }
 
     @Test
     public void delete() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete(VendorController.BASE_URL + "/1")
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(MockMvcRequestBuilders.delete(VendorController.BASE_URL + "/1"))
                 .andExpect(status().isOk());
 
-        verify(vendorService).delete(anyLong());
+        then(vendorService).should().delete(anyLong());
     }
 }

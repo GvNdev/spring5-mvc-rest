@@ -1,11 +1,10 @@
 package guru.springfamework.services;
 
 import guru.springfamework.api.v1.model.VendorDTO;
-
-import java.util.List;
+import guru.springfamework.api.v1.model.VendorListDTO;
 
 public interface VendorService {
-    List<VendorDTO> findAll();
+    VendorListDTO findAll();
     VendorDTO findById(Long id);
     VendorDTO save(VendorDTO vendorDTO);
     VendorDTO update(Long id, VendorDTO vendorDTO);
