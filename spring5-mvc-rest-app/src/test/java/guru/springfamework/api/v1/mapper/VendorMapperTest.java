@@ -1,7 +1,7 @@
 package guru.springfamework.api.v1.mapper;
 
-import guru.springfamework.api.v1.model.VendorDTO;
 import guru.springfamework.domain.Vendor;
+import guru.springfamework.model.VendorDTO;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

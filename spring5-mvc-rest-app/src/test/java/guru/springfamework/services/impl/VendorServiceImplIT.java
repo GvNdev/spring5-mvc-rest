@@ -1,9 +1,9 @@
 package guru.springfamework.services.impl;
 
 import guru.springfamework.api.v1.mapper.VendorMapper;
-import guru.springfamework.api.v1.model.VendorDTO;
 import guru.springfamework.bootstrap.Bootstrap;
 import guru.springfamework.domain.Vendor;
+import guru.springfamework.model.VendorDTO;
 import guru.springfamework.repositories.ProductRepository;
 import guru.springfamework.repositories.VendorRepository;
 import guru.springfamework.services.VendorService;

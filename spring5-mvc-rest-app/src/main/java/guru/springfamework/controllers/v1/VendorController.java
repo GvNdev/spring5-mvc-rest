@@ -1,13 +1,14 @@
 package guru.springfamework.controllers.v1;
 
-import guru.springfamework.api.v1.model.VendorDTO;
-import guru.springfamework.api.v1.model.VendorListDTO;
+import guru.springfamework.model.VendorDTO;
+import guru.springfamework.model.VendorListDTO;
 import guru.springfamework.services.VendorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(description = "This is my Vendor Controller")
 @RestController
@@ -25,7 +26,9 @@ public class VendorController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public VendorListDTO findAll() {
-        return vendorService.findAll();
+        VendorListDTO vendorListDTO = new VendorListDTO();
+        vendorListDTO.getVendors().addAll(vendorService.findAll());
+        return vendorListDTO;
     }
 
     @ApiOperation(value = "This will get a vendor found by id.", notes = "These are some notes about the findById function")

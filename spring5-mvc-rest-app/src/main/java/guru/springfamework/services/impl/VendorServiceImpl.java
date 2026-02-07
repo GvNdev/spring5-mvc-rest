@@ -1,10 +1,10 @@
 package guru.springfamework.services.impl;
 
 import guru.springfamework.api.v1.mapper.VendorMapper;
-import guru.springfamework.api.v1.model.VendorDTO;
-import guru.springfamework.api.v1.model.VendorListDTO;
 import guru.springfamework.controllers.v1.VendorController;
 import guru.springfamework.domain.Vendor;
+import guru.springfamework.model.VendorDTO;
+import guru.springfamework.model.VendorListDTO;
 import guru.springfamework.repositories.VendorRepository;
 import guru.springfamework.services.ResourceNotFoundException;
 import guru.springfamework.services.VendorService;
@@ -24,8 +24,8 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public VendorListDTO findAll() {
-        List<VendorDTO> vendors = vendorRepository
+    public List<VendorDTO> findAll() {
+        return  vendorRepository
                 .findAll()
                 .stream()
                 .map(vendor -> {
@@ -34,8 +34,6 @@ public class VendorServiceImpl implements VendorService {
                     return vendorDTO;
                 })
                 .collect(Collectors.toList());
-
-        return new VendorListDTO(vendors);
     }
 
     @Override

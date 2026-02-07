@@ -1,9 +1,9 @@
 package guru.springfamework.services;
 
 import guru.springfamework.api.v1.mapper.VendorMapper;
-import guru.springfamework.api.v1.model.VendorDTO;
-import guru.springfamework.api.v1.model.VendorListDTO;
 import guru.springfamework.domain.Vendor;
+import guru.springfamework.model.VendorDTO;
+import guru.springfamework.model.VendorListDTO;
 import guru.springfamework.repositories.VendorRepository;
 import guru.springfamework.services.impl.VendorServiceImpl;
 import org.junit.Before;
@@ -47,11 +47,11 @@ public class VendorServiceTest {
         given(vendorRepository.findAll()).willReturn(vendors);
 
         // When
-        VendorListDTO vendorListDTO = vendorService.findAll();
+        List<VendorDTO> vendorListDTO = vendorService.findAll();
 
         // Then
         then(vendorRepository).should(times(1)).findAll();
-        assertThat(vendorListDTO.getVendors().size(), is(equalTo(2)));
+        assertThat(vendorListDTO.size(), is(equalTo(2)));
     }
 
     @Test
