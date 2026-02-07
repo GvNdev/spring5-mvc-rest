@@ -58,7 +58,8 @@ public class ProductControllerTest {
         when(productService.findAll()).thenReturn(productDTOS);
 
         mockMvc.perform(get("/api/v1/products")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.products", hasSize(2)));
     }
@@ -72,7 +73,8 @@ public class ProductControllerTest {
         when(productService.findByName(anyString())).thenReturn(productDTO1);
 
         mockMvc.perform(get("/api/v1/products/ProductTest")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", equalTo(PRODUCT_NAME)));
     }
@@ -82,7 +84,7 @@ public class ProductControllerTest {
         when(productService.findByName(anyString())).thenThrow(ResourceNotFoundException.class);
 
         mockMvc.perform(get(ProductController.BASE_URL + "/foo")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 }
